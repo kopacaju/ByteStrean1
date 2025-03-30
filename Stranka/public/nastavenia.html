@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="BOB.ico" type="image/x-icon">
+    <title>Nastavenia Profilu - JKN Studio</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js";
+        import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-database.js";
+
+        // Firebase konfigurácia
+        const firebaseConfig = {
+  apiKey: "AIzaSyAY0U5myySZ9NTuYirfoeFWgNNLkBqFzqo",
+  authDomain: "bytestream-b25c7.firebaseapp.com",
+  databaseURL: "https://bytestream-b25c7-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bytestream-b25c7",
+  storageBucket: "bytestream-b25c7.appspot.com",
+  messagingSenderId: "442708898422",
+  appId: "1:442708898422:web:4c4f1f4a0865a533a42557",
+  measurementId: "G-F0YFHX6JCP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        // Funkcia na zmenu profilovej ikonky
+        const icons = ["po.jpg", "R.jpg", "OIP.jpg", "MMA.jpg", "KKA.jpg", "Bob.ico"];
+        const profilePic = document.getElementById("profile-pic");
+        const iconGrid = document.getElementById("icon-grid");
+        let selectedIcon = "icons/default.png";
+
+        window.loadIcons = function() {
+            icons.forEach((icon) => {
+                const img = document.createElement("img");
+                img.src = `icons/${icon}`;
+                img.alt = icon;
+                img.className = "icon";
+                img.addEventListener("click", () => {
+                    selectedIcon = `icons/${icon}`;
+                    profilePic.src = selectedIcon;
+                });
+                iconGrid.appendChild(img);
+            });
+        };
+
+        window.saveIcon = function() {
+            const user = auth.currentUser;
+            if (user) {
+                update(ref(database, `users/${user.uid}`), { photoURL: selectedIcon }).then(() => {
+                    return updateProfile(user, { photoURL: selectedIcon });
+                }).then(() => {
+                    alert("Ikonka bola úspešne uložená!");
+                }).catch((error) => {
+                    console.error("Chyba pri ukladaní ikonky:", error);
+                });
+            } else {
+                alert("Používateľ nie je prihlásený!");
+            }
+        };
+
+        // Funkcia na uloženie mena a emailu
+        window.saveChanges = function() {
+            const user = auth.currentUser;
+            const newName = document.getElementById("nameInput").value;
+            const newEmail = document.getElementById("emailInput").value;
+
+            if (user) {
+                const updates = {};
+                if (newName) updates.displayName = newName;
+                if (newEmail) updates.email = newEmail;
+
+                update(ref(database, `users/${user.uid}`), updates).then(() => {
+                    return updateProfile(user, { displayName: newName }).then(() => {
+                        alert("Zmeny boli úspešne uložené!");
+                        window.location.href = "index.html";
+
+                        document.getElementById("username").textContent = newName || user.displayName;
+                        document.getElementById("userEmail").textContent = newEmail || user.email;
+                    });
+                }).catch((error) => {
+                    console.error("Chyba pri ukladaní zmien:", error);
+                });
+            } else {
+                alert("Používateľ nie je prihlásený!");
+            }
+        };
+
+        // Funkcia na zaslanie odkazu na reset hesla
+        window.sendPasswordReset = function() {
+            const email = document.getElementById("emailInput").value;
+
+            if (email) {
+                sendPasswordResetEmail(auth, email)
+                    .then(() => alert("Odkaz na zmenu hesla bol odoslaný na váš email."))
+                    .catch((error) => {
+                        console.error("Chyba pri odosielaní emailu na reset hesla:", error);
+                    });
+            } else {
+                alert("Zadajte platný email!");
+            }
+        };
+
+        // Funkcia na odhlásenie
+        window.handleLogout = function() {
+            signOut(auth).then(() => {
+                alert("Úspešne odhlásený!");
+                location.href = "prihlasovanie.html";
+            }).catch((error) => {
+                console.error("Chyba pri odhlasovaní:", error);
+            });
+        };
+
+        // Načítanie údajov z databázy
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userRef = ref(database, `users/${user.uid}`);
+                get(userRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        document.getElementById("profile-pic").src = data.photoURL || "default-profile.jpg";
+                        document.getElementById("username").textContent = data.displayName || "Nezadané meno";
+                        document.getElementById("userEmail").textContent = data.email || "Nezadaný email";
+                        document.getElementById("nameInput").value = data.displayName || "";
+                        document.getElementById("emailInput").value = data.email || "";
+                    }
+                });
+            }
+        });
+    </script>
+    <style>
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+header {
+    background-color: #1e293b;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 3px solid #0ea5e9;
+}
+
+header h1 {
+    font-size: 2.4rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+main {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    overflow: hidden;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 10px;
+    border: 3px solid #0ea5e9;
+    transition: transform 0.2s ease, border-color 0.3s ease;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-picture:hover {
+    transform: scale(1.1);
+    border-color: #0284c7;
+}
+
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    justify-items: center;
+    margin: 20px 0;
+}
+
+.icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.icon:hover {
+    transform: translateY(-5px);
+    border-color: #0ea5e9;
+}
+
+.account-info {
+    margin-top: 25px;
+    padding: 15px;
+    background-color: #e2e8f0;
+    border-radius: 8px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 1rem;
+}
+
+.info-item .label {
+    font-weight: bold;
+    color: #1e293b;
+}
+
+.info-item .value {
+    color: #374151;
+}
+
+.update-info {
+    margin-top: 25px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 4px rgba(14, 165, 233, 0.5);
+}
+
+/* Buttons Design */
+button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.primary-btn {
+    background-color: #0ea5e9;
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #0284c7;
+}
+
+.secondary-btn {
+    background-color: #22c55e;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background-color: #16a34a;
+}
+
+.danger-btn {
+    background-color: #ef4444;
+    color: white;
+}
+
+.danger-btn:hover {
+    background-color: #dc2626;
+}
+
+footer {
+    margin-top: 20px;
+    padding: 15px 0;
+    text-align: center;
+    background-color: #1e293b;
+    color: white;
+    font-size: 0.9rem;
+}
+
+
+    </style>
+</head>
+<body onload="loadIcons()">
+    <header>
+        <h1>Nastavenia Profilu</h1>
+    </header>
+
+    <main>
+        <!-- Profile Section -->
+        <section class="profile-section">
+            <div class="profile-picture">
+                <img id="profile-pic" src="icons/default.png" alt="Profilová fotka">
+            </div>
+            <h2>Vyber svoju ikonku:</h2>
+            <div class="icon-grid" id="icon-grid"></div>
+            <button class="primary-btn" onclick="saveIcon()">Uložiť ikonku</button>
+        </section>
+
+        <!-- Account Information Section -->
+        <section class="account-info">
+            <h2>Informácie o účte:</h2>
+            <div class="info-item">
+                <span class="label">Meno:</span>
+                <span class="value" id="username">Načítava sa...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Email:</span>
+                <span class="value" id="userEmail">Načítava sa...</span>
+            </div>
+        </section>
+
+        <!-- Update Info Section -->
+        <section class="update-info">
+            <h2>Úprava údajov:</h2>
+            <div class="form-group">
+                <label for="nameInput">Nové meno:</label>
+                <input type="text" id="nameInput" placeholder="Zadajte nové meno">
+            </div>
+            <div class="form-group">
+                <label for="emailInput">Nový email:</label>
+                <input type="email" id="emailInput" placeholder="Zadajte nový email">
+            </div>
+            <button class="primary-btn" onclick="saveChanges()">Uložiť zmeny</button>
+        </section>
+
+        <!-- Password Reset Section -->
+        <section class="password-reset">
+            <h2>Zmeniť heslo:</h2>
+            <button class="secondary-btn" onclick="sendPasswordReset()">Zaslať odkaz na zmenu hesla</button>
+        </section>
+
+        <!-- Logout Button -->
+        <section class="logout">
+            <button class="danger-btn" onclick="handleLogout()">Odhlásiť sa</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 JKN Studio. Všetky práva vyhradené.</p>
+    </footer>
+</body>
