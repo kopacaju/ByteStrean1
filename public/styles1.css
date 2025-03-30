@@ -1,0 +1,78 @@
+/* styles1.css */
+body {
+    background-image: url('images/th.jpg'); /* Pridaj cestu k svojmu obrázku */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.login-form {
+    background-color: rgba(255, 255, 255, 0.9); /* Polopriehľadné pozadie */
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 12px; /* Mierne oblé rohy */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.login-form:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.login-form h2 {
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 25px; /* Oblé rohy */
+    box-sizing: border-box;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.login-form input[type="text"]:focus,
+.login-form input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 25px; /* Oblé rohy */
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease-in-out, transform 0.3s;
+}
+
+.login-form button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.login-form button:active {
+    background-color: #00408d;
+    transform: translateY(0);
+}

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Hry.ico" type="image/x-icon">
+
+    <script type="module">
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAY0U5myySZ9NTuYirfoeFWgNNLkBqFzqo",
+  authDomain: "bytestream-b25c7.firebaseapp.com",
+  databaseURL: "https://bytestream-b25c7-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bytestream-b25c7",
+  storageBucket: "bytestream-b25c7.appspot.com",
+  messagingSenderId: "442708898422",
+  appId: "1:442708898422:web:4c4f1f4a0865a533a42557",
+  measurementId: "G-F0YFHX6JCP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Funkcia na odhlásenie
+        window.handleLogout = function() {
+            signOut(auth).then(() => {
+                alert("Úspešne odhlásený!");
+                location.href = "prihlasovanie.html"; // Presmerovanie na prihlasovaciu stránku
+            }).catch((error) => {
+                alert("Chyba pri odhlasovaní: " + error.message);
+            });
+        };
+
+        // Funkcia na pridanie fotky
+        function handleAddPhoto() {
+            alert("Pridanie fotky nie je momentálne implementované."); // Na neskoršie rozšírenie
+        }
+
+        // Sleduj stav prihlásenia
+        onAuthStateChanged(auth, (user) => {
+            const profileSection = document.getElementById('profile-section');
+            const loginButton = document.getElementById('login-button');
+            const profilePic = document.getElementById('profile-pic');
+
+            if (user) {
+                // Používateľ je prihlásený
+                profileSection.style.display = "flex"; // Zobrazenie profilovej sekcie
+                loginButton.style.display = "none"; // Skrytie tlačidla prihlásenia
+
+                // Dynamické načítanie profilovej fotky (ak je dostupná z Firebase)
+                profilePic.src = user.photoURL || "BOB.ico"; // Použije predvolenú, ak nie je dostupná
+            } else {
+                // Používateľ nie je prihlásený
+                profileSection.style.display = "none"; // Skrytie profilovej sekcie
+                loginButton.style.display = "block"; // Zobrazenie tlačidla prihlásenia
+            }
+        });
+
+        // Zobrazenie/skrytie menu pri kliknutí
+        document.addEventListener("DOMContentLoaded", () => {
+            const profilePic = document.getElementById("profile-pic");
+            const dropdownContent = document.querySelector(".dropdown-content");
+
+            profilePic.addEventListener("click", () => {
+                dropdownContent.classList.toggle("show");
+            });
+
+            // Zatvorenie menu pri kliknutí mimo
+            document.addEventListener("click", (e) => {
+                if (!profilePic.contains(e.target) && !dropdownContent.contains(e.target)) {
+                    dropdownContent.classList.remove("show");
+                }
+            });
+        });
+
+// Duplicate handleLogout function removed to avoid syntax error
+
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-storage.js";
+
+    </script>
+
+
+    <title>Detail Módu - Bow Mód</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background: linear-gradient(90deg, #1d11c1, #757575);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0 0 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #1d11c1;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            font-size: 1.2rem;
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #ffc107;
+            color: #1d11c1;
+        }
+/* Profile Section */
+.profile-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 10;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.dropdown-content.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #f0f0f0;
+    color: #1d11c1;
+}
+/* Login Button */
+#login-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .container img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .container p {
+            font-size: 1.2rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-button {
+            font-size: 1rem;
+            color: #007BFF;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            color: #0056b3;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bow Mód</h1>
+        <p>Zaži presnosť a silu lukostreľby.</p>
+    </header>
+
+    <!-- Text-Based Menu -->
+    <nav>
+        <a href="hry.html">Hry</a>
+        <a href="Blog.html">Blog</a>
+        <a href="support.html">Podpora</a>
+        <a href="index.html">Domov</a>
+        <a href="Mody-Aplikacie.html">Módy a Aplikácie</a>
+    </nav>
+
+    <div class="container">
+        <img src="images/archery.png" alt="Ukážka Bow Módu">
+        <h2>Čo je Bow Mód?</h2>
+        <p>
+            Bow Mód je nový rozšírenie, ktoré ti umožňuje zažiť precízne lukostreľbu s pridanými špeciálnymi schopnosťami pre luky a šípy.
+            Ovládni svoje schopnosti a staň sa neprekonateľným bojovníkom na diaľku.
+        </p>
+        <p>
+            Tento mód je kompatibilný s Minecraft servermi a dostupný vo verzii 1.21+. Stačí stiahnuť a pridať na server.
+        </p>
+
+        <div class="button-container">
+            <button onclick="location.href='https://raw.githubusercontent.com/kopacaju/Armor-Bonus/refs/heads/main/Bow-1.0-SNAPSHOT.jar'" download>Stiahnuť mód</button>
+        </div>
+
+        <a href="Mody-Aplikacie.html" class="back-button">← Späť na Módy a Aplikácie</a>
+    </div>
+    <!-- Profilová sekcia -->
+    <div id="profile-section" class="profile-container">
+        <img id="profile-pic" src="BOB.ico" alt="Profilová fotka" class="profile-pic">
+        <div class="dropdown">
+            <div class="dropdown-content">
+                <a href="nastavenia.html">Nastavenia</a>
+                <a href="#" onclick="handleLogout()">Odhlásiť sa</a>
+            </div>
+        </div>
+    </div>
+    <button id="login-button" onclick="location.href='prihlasovanie.html'" style="display: none;">Prihlásiť sa</button>
+    <footer>
+        <p>&copy; 2025 JKN Studio. Všetky práva vyhradené.</p>
+    </footer>
+</body>
+</html>

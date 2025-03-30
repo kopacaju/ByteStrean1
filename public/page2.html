@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="BOB.ico" type="image/x-icon">
+
+
+    <script type="module">
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAY0U5myySZ9NTuYirfoeFWgNNLkBqFzqo",
+  authDomain: "bytestream-b25c7.firebaseapp.com",
+  databaseURL: "https://bytestream-b25c7-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bytestream-b25c7",
+  storageBucket: "bytestream-b25c7.appspot.com",
+  messagingSenderId: "442708898422",
+  appId: "1:442708898422:web:4c4f1f4a0865a533a42557",
+  measurementId: "G-F0YFHX6JCP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Funkcia na odhlásenie
+        window.handleLogout = function() {
+            signOut(auth).then(() => {
+                alert("Úspešne odhlásený!");
+                location.href = "prihlasovanie.html"; // Presmerovanie na prihlasovaciu stránku
+            }).catch((error) => {
+                alert("Chyba pri odhlasovaní: " + error.message);
+            });
+        };
+
+        // Funkcia na pridanie fotky
+        function handleAddPhoto() {
+            alert("Pridanie fotky nie je momentálne implementované."); // Na neskoršie rozšírenie
+        }
+
+        // Sleduj stav prihlásenia
+        onAuthStateChanged(auth, (user) => {
+            const profileSection = document.getElementById('profile-section');
+            const loginButton = document.getElementById('login-button');
+            const profilePic = document.getElementById('profile-pic');
+
+            if (user) {
+                // Používateľ je prihlásený
+                profileSection.style.display = "flex"; // Zobrazenie profilovej sekcie
+                loginButton.style.display = "none"; // Skrytie tlačidla prihlásenia
+
+                // Dynamické načítanie profilovej fotky (ak je dostupná z Firebase)
+                profilePic.src = user.photoURL || "BOB.ico"; // Použije predvolenú, ak nie je dostupná
+            } else {
+                // Používateľ nie je prihlásený
+                profileSection.style.display = "none"; // Skrytie profilovej sekcie
+                loginButton.style.display = "block"; // Zobrazenie tlačidla prihlásenia
+            }
+        });
+
+        // Zobrazenie/skrytie menu pri kliknutí
+        document.addEventListener("DOMContentLoaded", () => {
+            const profilePic = document.getElementById("profile-pic");
+            const dropdownContent = document.querySelector(".dropdown-content");
+
+            profilePic.addEventListener("click", () => {
+                dropdownContent.classList.toggle("show");
+            });
+
+            // Zatvorenie menu pri kliknutí mimo
+            document.addEventListener("click", (e) => {
+                if (!profilePic.contains(e.target) && !dropdownContent.contains(e.target)) {
+                    dropdownContent.classList.remove("show");
+                }
+            });
+        });
+
+// Duplicate handleLogout function removed to avoid syntax error
+
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-storage.js";
+
+    </script>
+
+<style>
+    /* Profile Section */
+    .profile-container {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .profile-pic {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        object-fit: cover;
+        cursor: pointer;
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        z-index: 10;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    .dropdown-content.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .dropdown-content a {
+        display: block;
+        padding: 15px 20px;
+        text-decoration: none;
+        color: #333;
+        font-size: 1.2rem;
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .dropdown-content a:last-child {
+        border-bottom: none;
+    }
+    
+    .dropdown-content a:hover {
+        background-color: #f0f0f0;
+        color: #1d11c1;
+    }
+    /* Login Button */
+    #login-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+    
+    </style>
+
+    <title>Stránka 1</title>
+    <style></style>
+    <link rel="stylesheet" href="styles.css"> <!-- Odkaz na CSS súbor -->
+
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Stránka 1</h1>
+        <div class="image-gallery">
+            <img src="images/59.jpg" alt="Obrázok 1">
+            <img src="images/60.jpg" alt="Obrázok 2">
+            <img src="images/61.jpg" alt="Obrázok 3">
+            <img src="images/62.jpg" alt="Obrázok 4">
+            <img src="images/63.jpg" alt="Obrázok 5">
+            <img src="images/64.jpg" alt="Obrázok 6">
+            <img src="images/65.jpg" alt="Obrázok 7">
+            <img src="images/66.jpg" alt="Obrázok 8">
+            <img src="images/67.jpg" alt="Obrázok 9">
+            <img src="images/68.jpg" alt="Obrázok 10">
+            <img src="images/69.jpg" alt="Obrázok 11">
+            <img src="images/70.jpg" alt="Obrázok 12">
+            <img src="images/71.jpg" alt="Obrázok 13">
+            <img src="images/72.jpg" alt="Obrázok 14">
+            <img src="images/73.jpg" alt="Obrázok 15">
+            <img src="images/74.jpg" alt="Obrázok 16">
+            <img src="images/75.jpg" alt="Obrázok 17">
+            <img src="images/76.jpg" alt="Obrázok 18">
+            <img src="images/77.jpg" alt="Obrázok 19">
+            <img src="images/78.jpg" alt="Obrázok 20">
+            <img src="images/79.jpg" alt="Obrázok 21">
+            <img src="images/80.jpg" alt="Obrázok 22">
+            <img src="images/81.jpg" alt="Obrázok 23">
+            <img src="images/82.jpg" alt="Obrázok 24">
+            <img src="images/83.jpg" alt="Obrázok 25">
+            <img src="images/84.jpg" alt="Obrázok 26">
+        </div>
+        <p></p>
+        <nav>
+            <ul>
+                <li><button onclick="location.href='Dejepis.html'">Späť na domovskú stránku</button></li>
+            </ul>
+        </nav>
+            <!-- Profilová sekcia -->
+<div id="profile-section" class="profile-container">
+    <img id="profile-pic" src="BOB.ico" alt="Profilová fotka" class="profile-pic">
+    <div class="dropdown">
+        <div class="dropdown-content">
+            <a href="nastavenia.html">Nastavenia</a>
+            <a href="#" onclick="handleLogout()">Odhlásiť sa</a>
+        </div>
+    </div>
+</div>
+<button id="login-button" onclick="location.href='prihlasovanie.html'" style="display: none;">Prihlásiť sa</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

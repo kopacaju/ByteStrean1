@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="BOB.ico" type="image/x-icon">
+    <script src="cookies.js"></script>
+
+
+    <title>Moja Hlavná Stránka - JKN Studio</title>
+    <script type="module">
+       import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js";
+import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-database.js";
+// Tvoja Firebase konfigurácia
+const firebaseConfig = {
+  apiKey: "AIzaSyAY0U5myySZ9NTuYirfoeFWgNNLkBqFzqo",
+  authDomain: "bytestream-b25c7.firebaseapp.com",
+  databaseURL: "https://bytestream-b25c7-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bytestream-b25c7",
+  storageBucket: "bytestream-b25c7.appspot.com",
+  messagingSenderId: "442708898422",
+  appId: "1:442708898422:web:4c4f1f4a0865a533a42557",
+  measurementId: "G-F0YFHX6JCP"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const auth = getAuth(app);
+
+
+document.getElementById('submit1').addEventListener('click', (e) => {
+  e.preventDefault(); // Prevent form submission
+
+  var email = document.getElementById("email1").value;
+  var password = document.getElementById("password1").value;
+  var username = document.getElementById("username").value;
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+
+      // Save user data to the database
+      set(ref(database, 'users/' + user.uid), {
+        username: username,
+        email: email,
+        password: password
+      }).then(() => {
+        console.log("User data saved successfully.");
+        alert("User registered successfully!");
+        window.location.href = "index.html";
+
+      }).catch((error) => {
+        console.error("Error saving user data: ", error);
+        alert("Error saving user data: " + error.message);
+      });
+    })
+    .catch((error) => {
+      const errorMessage = error.message;
+      alert("Error: " + errorMessage);
+    });
+});
+
+document.getElementById('submit').addEventListener('click', (e) => {
+  e.preventDefault(); // Prevent form submission
+
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+
+  const auth = getAuth();
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+
+      const dt = new Date();
+      update(ref(database, 'users/' + user.uid), {
+        last_login: dt,
+      });
+      alert("Prihlásenie úspešné!");
+      window.location.href = "index.html";
+
+    })
+    .catch((error) => {
+      const errorMessage = error.message;
+      alert("Prihlásenie zlyhalo: " + errorMessage);
+    });
+});
+
+const user = auth.currentUser;
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    const uid = user.uid;
+    // User is signed
+    // ...
+  } else {
+    // User is signed out
+    // ...
+    // User is signed
+  }
+});
+
+logout.addEventListener('click', (e) => {
+
+    signOut(auth).then(() => {
+  // Sign-out successful.
+  alert("Odhlásenie úspešné!");
+}).catch((error) => {
+  // An error happened.
+const errorCode = error.code;
+const errorMessage = error.message;
+
+alert("Odhlásenie zlyhalo: " + errorMessage);
+});
+});
+
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    // Ak je používateľ prihlásený, presmeruj na index
+    window.location.href = "index.html";
+  }
+});
+
+    </script>
+</head>
+</script>
+    
+    <title>Moja Hlavná Stránka - JKN Studio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background: linear-gradient(90deg, #1d11c1, #757575);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            background-color: #1d11c1;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: #ffc107;
+        }
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#login">Prihlásenie</a></li>
+            <li><a href="index.html">Moje projekty</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="projects">
+            <div class="content-grid">
+                <!-- Obsah projektov -->
+            </div>
+        </section>
+        <section id="register">
+            <div class="login-form">
+                <h2>Registrácia</h2>
+                <form id="register-form">
+                    <input type="text" name="meno" id="username" placeholder="Vaše meno" autocomplete="name" required>
+                    <input type="email" name="email" id="email1" placeholder="Váš email" autocomplete="email" required>
+                    <input type="password" name="heslo" id="password1" placeholder="Vaše heslo" autocomplete="new-password" required>                    
+                    <button type="submit" id="submit1">Registrovať sa</button>
+                </form>
+            </div>
+        </section>
+        <section id="login">
+            <div class="login-form">
+                <h2>Prihlásenie</h2>
+                <form id="login-form">
+                    <input type="email" id="email" name="email" placeholder="Váš email" required>
+                    <input type="password" id="password" name="heslo" placeholder="Vaše heslo" required>
+                    <button type="submit" id="submit">prihlasit sa </button>
+                    
+                </form>
+            </div>
+        </section>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Tvoja Stránka. Všetky práva vyhradené.</p>
+    </script>
+</body>
+</html>

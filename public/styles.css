@@ -1,0 +1,72 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    color: #000000;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    margin: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #000000;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: green; /* Nastavenie farby tlačidla na zelenú */
+    color: white; /* Farba textu tlačidla na bielu */
+    border: none; /* Odstránenie okrajov tlačidla */
+    border-radius: 5px; /* Zaguľatenie rohov tlačidla */
+}
+
+button:hover {
+    background-color: #006400; /* Tmavšia zelená farba pri prechode myšou */
+}
+
+.logo-container {
+    margin-top: 20px;
+}
+
+.logo-container img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}

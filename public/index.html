@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="BOB.ico" type="image/x-icon">
+
+    <title>Vitaj na stranke ByteStream</title>
+    <script type="module">
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAY0U5myySZ9NTuYirfoeFWgNNLkBqFzqo",
+  authDomain: "bytestream-b25c7.firebaseapp.com",
+  databaseURL: "https://bytestream-b25c7-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bytestream-b25c7",
+  storageBucket: "bytestream-b25c7.appspot.com",
+  messagingSenderId: "442708898422",
+  appId: "1:442708898422:web:4c4f1f4a0865a533a42557",
+  measurementId: "G-F0YFHX6JCP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Funkcia na odhlásenie
+        window.handleLogout = function() {
+            signOut(auth).then(() => {
+                alert("Úspešne odhlásený!");
+                location.href = "prihlasovanie.html"; // Presmerovanie na prihlasovaciu stránku
+            }).catch((error) => {
+                alert("Chyba pri odhlasovaní: " + error.message);
+            });
+        };
+
+        // Funkcia na pridanie fotky
+        function handleAddPhoto() {
+            alert("Pridanie fotky nie je momentálne implementované."); // Na neskoršie rozšírenie
+        }
+
+        // Sleduj stav prihlásenia
+        onAuthStateChanged(auth, (user) => {
+            const profileSection = document.getElementById('profile-section');
+            const loginButton = document.getElementById('login-button');
+            const profilePic = document.getElementById('profile-pic');
+
+            if (user) {
+                // Používateľ je prihlásený
+                profileSection.style.display = "flex"; // Zobrazenie profilovej sekcie
+                loginButton.style.display = "none"; // Skrytie tlačidla prihlásenia
+
+                // Dynamické načítanie profilovej fotky (ak je dostupná z Firebase)
+                profilePic.src = user.photoURL || "BOB.ico"; // Použije predvolenú, ak nie je dostupná
+            } else {
+                // Používateľ nie je prihlásený
+                profileSection.style.display = "none"; // Skrytie profilovej sekcie
+                loginButton.style.display = "block"; // Zobrazenie tlačidla prihlásenia
+            }
+        });
+
+        // Zobrazenie/skrytie menu pri kliknutí
+        document.addEventListener("DOMContentLoaded", () => {
+            const profilePic = document.getElementById("profile-pic");
+            const dropdownContent = document.querySelector(".dropdown-content");
+
+            profilePic.addEventListener("click", () => {
+                dropdownContent.classList.toggle("show");
+            });
+
+            // Zatvorenie menu pri kliknutí mimo
+            document.addEventListener("click", (e) => {
+                if (!profilePic.contains(e.target) && !dropdownContent.contains(e.target)) {
+                    dropdownContent.classList.remove("show");
+                }
+            });
+        });
+
+// Duplicate handleLogout function removed to avoid syntax error
+
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-storage.js";
+
+
+    </script>
+    <style>
+       body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(90deg, #1d11c1, #757575);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1.3rem;
+            margin: 10px 0 0;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background-color: #1d11c1;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #ffc107;
+        }
+
+        .profile-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none;
+        }
+
+        #login-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    object-fit: cover;
+    cursor: pointer;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: 10;
+            overflow: hidden;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .dropdown-content.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f0f0f0;
+            color: #1d11c1;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header {
+    background: linear-gradient(135deg, #1d11c1, #4a148c); /* Jemný farebný prechod */
+    color: white;
+    padding: 50px 0;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); /* Jemný tieň textu pre šmrnc */
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.cta-button {
+    padding: 12px 25px;
+    background: linear-gradient(90deg, #ffc107, #ff9800); /* Prechodová farba pre moderný efekt */
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 152, 0, 0.4); /* Jemný tieň */
+    transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+    background: linear-gradient(90deg, #ff9800, #e65100); /* Svetlejšie odtiene pri hover */
+    box-shadow: 0 6px 15px rgba(255, 98, 0, 0.6); /* Zvýraznený efekt */
+    transform: scale(1.05); /* Jemné zväčšenie tlačidla */
+}
+
+.content-item {
+    background-color: rgba(30, 30, 50, 0.95); /* Jemne priesvitné pozadie */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtílny 3D efekt */
+    transition: all 0.3s ease;
+}
+
+.content-item:hover {
+    transform: translateY(-5px); /* Jemné nadvihnutie */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Hlbší tieň */
+}
+
+footer {
+    background: #1d1d1d; /* Tmavšie pozadie pre kontrast */
+    color: #e0e0e0;
+    text-align: center;
+    padding: 20px;
+}
+
+        .intro p {
+            font-size: 1.5rem;
+            color: #555;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .content-item {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-item h2 {
+            font-size: 1.7rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .content-item p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .content-item a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .content-item a:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vítaj na stránke ByteStream!</h1>
+        <!-- Profilová sekcia -->
+        <div id="profile-section" class="profile-container">
+            <img id="profile-pic" src="BOB.ico" alt="Profilová fotka" class="profile-pic">
+            <div class="dropdown">
+                <div class="dropdown-content">
+                    <a href="nastavenia.html">Nastavenia</a>
+                    <a href="#" onclick="handleLogout()">Odhlásiť sa</a>
+                </div>
+            </div>
+        </div>
+        <button id="login-button" onclick="location.href='prihlasovanie.html'">Prihlásiť sa</button>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#projects"> projekty</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Úvodná sekcia (Hero) -->
+        <section id="hero" class="intro">
+            <h2>Objav svet inovácie, učenia a zábavy na ByteStream!</h2>
+            <p>Prehliadni si moje projekty, vyskúšaj nové hry alebo sa ponor do vzdelávacích tém.</p>
+            <button onclick="location.href='#projects'" class="cta-button">Preskúmaj projekty</button>
+        </section>
+    
+        <!-- Sekcia Odporúčané projekty -->
+        <section id="featured-projects">
+            <h2>Odporúčané projekty</h2>
+            <div class="content-grid">
+                <div class="content-item">
+                    <h2>Nová hra: Racing Dream (Vo vývoji)</h2>
+                    <p>Závodná hra plná adrenalínu, kde budujete vlastnú kariéru šoféra snov!</p>
+                    <a href="racing_dream.html">Viac</a>
+                </div>
+                <div class="content-item">
+                    <h2>Vzdelávací materiál: Dejepis</h2>
+                    <p>Zaujímavé fakty, časové osy a učebné zdroje na jednom mieste.</p>
+                    <a href="Dejepis.html">Viac</a>
+                </div>
+            </div>
+        </section>
+    
+        <!-- Pôvodná sekcia Moje projekty -->
+        <section id="projects">
+            <h2>Moje projekty</h2>
+            <div class="content-grid">
+                <div class="content-item">
+                    <h2>Blog</h2>
+                    <p>Články a novinky na rôzne témy.</p>
+                    <a href="Blog.html">Viac</a>
+                </div>
+                <div class="content-item">
+                    <h2>Dejepis</h2>
+                    <p>Zaujímavé prezentácie na vzdelávacie témy.</p>
+                    <a href="Dejepis.html">Viac</a>
+                </div>
+                <div class="content-item">
+                    <h2>Módy a Aplikácie</h2>
+                    <p>Stiahni si moje aplikácie a módy pre maximálny zážitok.</p>
+                    <a href="Mody-Aplikacie.html">Viac</a>
+                </div>
+                <div class="content-item">
+                    <h2>Hry</h2>
+                    <p>Tu nájdeš moje hry/hry ktoré sú vo vývoji.</p>
+                    <a href="hry.html">Viac</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Tvoja Stránka. Všetky práva vyhradené.</p>
+    </footer>
+</body>
+</html>
